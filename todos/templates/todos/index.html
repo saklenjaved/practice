@@ -61,10 +61,61 @@
       font-size: 0.95rem;
       margin: 0 0 1.5rem;
     }
-    form.add {
+    .category-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+    .category-nav a {
+      font-size: 0.9rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      background: var(--card);
+    }
+    .category-nav a:hover {
+      border-color: var(--accent);
+    }
+    .category-nav a.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+    .category-nav .label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-right: 0.25rem;
+    }
+    form.add-category {
       display: flex;
       gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    form.add-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
       margin-bottom: 1.25rem;
+      align-items: center;
+    }
+    form.add-row .task-fields {
+      display: flex;
+      flex: 1;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+    form.add-row select {
+      padding: 0.55rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text);
+      font: inherit;
+      max-width: 10rem;
     }
     input[type="text"] {
       flex: 1;
@@ -76,7 +127,7 @@
       color: var(--text);
       font: inherit;
     }
-    input[type="text"]:focus {
+    input[type="text"]:focus, select:focus {
       outline: 2px solid var(--accent);
       outline-offset: 1px;
     }
@@ -128,6 +179,11 @@
       text-decoration: line-through;
       color: var(--muted);
     }
+    .task-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-left: 0.25rem;
+    }
     .actions {
       display: flex;
       gap: 0.35rem;
@@ -155,13 +211,39 @@
 <body>
   <main>
     <h1>My to-do</h1>
-    <p class="sub">Add tasks, mark them done, or remove them.</p>
+    <p class="sub">Add tasks, mark them done, or remove them. Organize with categories.</p>
 
-    <form class="add" method="post" action="{% url 'todos:index' %}">
+    <nav class="category-nav" aria-label="Categories">
+      <span class="label">Show:</span>
+      <a href="{% url 'todos:index' %}" {% if not category_filter_id %}class="active"{% endif %}>All</a>
+      {% for c in categories %}
+      <a href="{% url 'todos:index' %}?category={{ c.pk }}" {% if category_filter_id == c.pk|stringformat:"d" %}class="active"{% endif %}>{{ c.name }}</a>
+      {% endfor %}
+    </nav>
+
+    <form class="add-category" method="post" action="{% url 'todos:index' %}">
       {% csrf_token %}
-      <label for="title" class="visually-hidden">New task</label>
-      <input id="title" type="text" name="title" placeholder="What needs doing?" maxlength="200" autocomplete="off" required>
-      <button class="add-btn" type="submit">Add</button>
+      <input type="hidden" name="filter_category" value="{{ category_filter_id }}">
+      <label for="category_name" class="visually-hidden">New category name</label>
+      <input id="category_name" type="text" name="category_name" placeholder="New category name" maxlength="100" autocomplete="off">
+      <button class="add-btn" type="submit">Add category</button>
+    </form>
+
+    <form class="add-row" method="post" action="{% url 'todos:index' %}">
+      {% csrf_token %}
+      <input type="hidden" name="filter_category" value="{{ category_filter_id }}">
+      <div class="task-fields">
+        <label for="title" class="visually-hidden">New task</label>
+        <input id="title" type="text" name="title" placeholder="What needs doing?" maxlength="200" autocomplete="off" required>
+        <label for="category" class="visually-hidden">Category for task</label>
+        <select id="category" name="category" aria-label="Category for task">
+          <option value="">No category</option>
+          {% for c in categories %}
+          <option value="{{ c.pk }}">{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button class="add-btn" type="submit">Add task</button>
     </form>
 
     <ul class="tasks" aria-label="Tasks">
@@ -169,20 +251,27 @@
       <li class="task">
         <form method="post" action="{% url 'todos:toggle' task.pk %}" id="toggle-{{ task.pk }}">
           {% csrf_token %}
+          <input type="hidden" name="filter_category" value="{{ category_filter_id }}">
         </form>
         <label for="cb-{{ task.pk }}">
           <input form="toggle-{{ task.pk }}" type="checkbox" id="cb-{{ task.pk }}" {% if task.done %}checked{% endif %} onchange="this.form.submit()">
           <span class="task-title{% if task.done %} done{% endif %}">{{ task.title }}</span>
+          {% if task.category %}
+          <span class="task-meta">({{ task.category.name }})</span>
+          {% endif %}
         </label>
         <div class="actions">
           <form method="post" action="{% url 'todos:delete' task.pk %}" onsubmit="return confirm('Remove this task?');">
             {% csrf_token %}
+            <input type="hidden" name="filter_category" value="{{ category_filter_id }}">
             <button class="icon-btn" type="submit">Remove</button>
           </form>
         </div>
       </li>
       {% empty %}
-      <li class="empty">No tasks yet. Add one above.</li>
+      <li class="empty">
+        {% if category_filter_id %}No tasks in this category.{% else %}No tasks yet. Add one above.{% endif %}
+      </li>
       {% endfor %}
     </ul>
   </main>
