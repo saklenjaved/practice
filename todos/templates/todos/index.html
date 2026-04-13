@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My to-do</title>
+  <style>
+    :root {
+      --bg: #f6f5f2;
+      --card: #fff;
+      --text: #1a1a1a;
+      --muted: #5c5c5c;
+      --border: #e0ddd4;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #12141a;
+        --card: #1c1f28;
+        --text: #f0f0f0;
+        --muted: #9ca3af;
+        --border: #2d3340;
+        --accent: #60a5fa;
+        --accent-hover: #93c5fd;
+      }
+    }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    main {
+      max-width: 28rem;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+      letter-spacing: -0.02em;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0 0 1.5rem;
+    }
+    form.add {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    input[type="text"] {
+      flex: 1;
+      min-width: 0;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text);
+      font: inherit;
+    }
+    input[type="text"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+    button[type="submit"], .btn {
+      font: inherit;
+      cursor: pointer;
+      border-radius: 8px;
+      border: none;
+      padding: 0.55rem 1rem;
+    }
+    button.add-btn {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 500;
+    }
+    button.add-btn:hover {
+      background: var(--accent-hover);
+    }
+    ul.tasks {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    li.task {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .task label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      flex: 1;
+      min-width: 0;
+    }
+    .task-title {
+      word-break: break-word;
+    }
+    .task-title.done {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+    .actions {
+      display: flex;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+    .actions form { display: inline; margin: 0; }
+    button.icon-btn {
+      padding: 0.35rem 0.6rem;
+      font-size: 0.8rem;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    button.icon-btn:hover {
+      color: var(--text);
+      border-color: var(--muted);
+    }
+    .empty {
+      color: var(--muted);
+      font-size: 0.95rem;
+      padding: 0.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>My to-do</h1>
+    <p class="sub">Add tasks, mark them done, or remove them.</p>
+
+    <form class="add" method="post" action="{% url 'todos:index' %}">
+      {% csrf_token %}
+      <label for="title" class="visually-hidden">New task</label>
+      <input id="title" type="text" name="title" placeholder="What needs doing?" maxlength="200" autocomplete="off" required>
+      <button class="add-btn" type="submit">Add</button>
+    </form>
+
+    <ul class="tasks" aria-label="Tasks">
+      {% for task in tasks %}
+      <li class="task">
+        <form method="post" action="{% url 'todos:toggle' task.pk %}" id="toggle-{{ task.pk }}">
+          {% csrf_token %}
+        </form>
+        <label for="cb-{{ task.pk }}">
+          <input form="toggle-{{ task.pk }}" type="checkbox" id="cb-{{ task.pk }}" {% if task.done %}checked{% endif %} onchange="this.form.submit()">
+          <span class="task-title{% if task.done %} done{% endif %}">{{ task.title }}</span>
+        </label>
+        <div class="actions">
+          <form method="post" action="{% url 'todos:delete' task.pk %}" onsubmit="return confirm('Remove this task?');">
+            {% csrf_token %}
+            <button class="icon-btn" type="submit">Remove</button>
+          </form>
+        </div>
+      </li>
+      {% empty %}
+      <li class="empty">No tasks yet. Add one above.</li>
+      {% endfor %}
+    </ul>
+  </main>
+</body>
+</html>
