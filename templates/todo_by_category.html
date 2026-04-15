@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Tasks</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+
+                <h2>Category Tasks</h2>
+                <hr>
+                <br>
+                <h4><li>{{ category.name }} Category's Tasks</li></h4>
+                <br>
+                <ul>
+                    {% for t in todo %}
+                    <li>
+                        <span>
+                            <b>{{t.title}}</b> &nbsp -
+                            
+                            {% if t.completed %}
+                                Done
+                            {% else %}
+                                Pending
+                            {% endif %}
+
+                            &nbsp - {{t.created_at}} &nbsp
+
+                            <a href="{% url 'update_task' t.id %}" class="btn">Edit</a>
+                            <a href="{% url 'delete_task' t.id %}" class="btn">Delete</a>
+                        </span>
+                    </li>
+                    {% empty %}
+                        <li>No tasks in this category</li>
+                    {% endfor %}
+                </ul><br>
+                <a href="{% url 'index' %}" class="btn btn-default">Back</a>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
