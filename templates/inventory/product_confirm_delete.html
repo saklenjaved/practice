@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Delete product · IMS{% endblock %}
+{% block content %}
+<h1>Delete product</h1>
+<p class="lead">This cannot be undone.</p>
+
+<div class="card max-w-form">
+  <p>Remove <strong>{{ product.name }}</strong>? Purchase and sale rows for this product will be deleted as well.</p>
+  <form method="post" class="toolbar toolbar-after">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-sm">Yes, delete</button>
+    <a class="btn btn-outline btn-sm" href="{% url 'product_list' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

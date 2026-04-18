@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Register · IMS{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block content %}
+<div class="auth-card">
+  <h2>Create account</h2>
+  <span class="muted">Fill in your details to register.</span>
+
+  <form method="post" action="">
+    {% csrf_token %}
+    <h3>Account</h3>
+    {{ user_form.as_p }}
+    <h3>Profile</h3>
+    {{ profile_form.as_p }}
+    <button type="submit">Register</button>
+  </form>
+
+  <p class="auth-footer">Already registered? <a href="{% url 'login' %}">Sign in</a></p>
+</div>
+{% endblock %}

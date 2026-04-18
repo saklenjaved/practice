@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Admin · IMS{% endblock %}
+{% block content %}
+<h1>Admin overview</h1>
+<p class="lead">You manage stock and records. Customers buy from the <strong>Shop</strong>; you use <strong>Record sale</strong> for manual entries.</p>
+
+<div class="card">
+  <h2 class="h2">Storefront</h2>
+  <div class="toolbar" style="margin-bottom:12px;">
+    <a class="btn btn-outline btn-sm" href="{% url 'shop' %}">View public shop</a>
+  </div>
+  <p class="muted mb-0">The shop is public. Purchases by customers create sales records and reduce inventory.</p>
+</div>
+
+<div class="card">
+  <h2 class="h2">Inventory tools</h2>
+  <div class="toolbar" style="margin-bottom:0;">
+    <a class="btn btn-primary btn-sm" href="{% url 'inventory_dashboard' %}">Inventory home</a>
+    <a class="btn btn-outline btn-sm" href="{% url 'category_list' %}">Categories</a>
+    <a class="btn btn-outline btn-sm" href="{% url 'product_list' %}">Products</a>
+    <a class="btn btn-outline btn-sm" href="{% url 'add_product' %}">Add product</a>
+    <a class="btn btn-outline btn-sm" href="{% url 'purchase_list' %}">Purchases</a>
+    <a class="btn btn-outline btn-sm" href="{% url 'sell_add' %}">Record sale</a>
+    <a class="btn btn-outline btn-sm" href="{% url 'sell_list' %}">All sales</a>
+  </div>
+</div>
+{% endblock %}

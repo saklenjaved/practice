@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}My account · IMS{% endblock %}
+{% block content %}
+<h1>My account</h1>
+<p class="lead">Welcome back. Use the shop to browse and buy products.</p>
+
+<div class="card">
+  <h2 class="h2">Shortcuts</h2>
+  <div class="toolbar" style="margin-bottom:0;">
+    <a class="btn btn-primary btn-sm" href="{% url 'shop' %}">Go to shop</a>
+  </div>
+</div>
+{% endblock %}

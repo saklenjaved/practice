@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Inventory · IMS{% endblock %}
+{% block content %}
+<h1>Inventory overview</h1>
+<p class="lead">Admin summary: stock and movement (purchases and sales).</p>
+
+<div class="stat-row">
+  <div class="stat"><span>{{ product_count }}</span> products</div>
+  <div class="stat"><span>{{ category_count }}</span> categories</div>
+  <div class="stat"><span>{{ purchase_count }}</span> purchases</div>
+  <div class="stat"><span>{{ sell_count }}</span> sales</div>
+</div>
+
+<div class="toolbar">
+  <a class="btn btn-outline btn-sm" href="{% url 'shop' %}">View shop</a>
+  <a class="btn btn-outline btn-sm" href="{% url 'product_list' %}">All products</a>
+  <a class="btn btn-outline btn-sm" href="{% url 'category_list' %}">Categories</a>
+  <a class="btn btn-outline btn-sm" href="{% url 'purchase_list' %}">Purchases</a>
+  <a class="btn btn-outline btn-sm" href="{% url 'sell_list' %}">Sales</a>
+</div>
+
+{% if low_stock %}
+<div class="card card--tight">
+  <h2 class="h2">Low stock (under 5)</h2>
+  <ul class="simple-list">
+    {% for p in low_stock %}
+    <li><strong>{{ p.name }}</strong> — {{ p.quantity }} left</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2 class="h2">Recent purchases</h2>
+  {% if purchases %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Buyer</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in purchases %}
+        <tr>
+          <td>{{ row.product }}</td>
+          <td>{{ row.quantity }}</td>
+          <td>{{ row.buyer }}</td>
+          <td>{{ row.date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No purchases yet.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2 class="h2">Recent sales</h2>
+  {% if sells %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Customer</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in sells %}
+        <tr>
+          <td>{{ row.product }}</td>
+          <td>{{ row.quantity }}</td>
+          <td>{{ row.customer }}</td>
+          <td>{{ row.date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No sales yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

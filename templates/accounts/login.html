@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Sign in · IMS{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block content %}
+<div class="auth-card">
+  <h2>Sign in</h2>
+  <span class="muted">Use the email and password for your IMS account.</span>
+
+  {% if error %}
+  <p class="alert-error">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" action="">
+    {% csrf_token %}
+    {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
+    <p>
+      <label for="id_email">Email</label>
+      <input id="id_email" type="email" name="email" autocomplete="email" required>
+    </p>
+    <p>
+      <label for="id_password">Password</label>
+      <input id="id_password" type="password" name="password" autocomplete="current-password" required>
+    </p>
+    <button type="submit">Sign in</button>
+  </form>
+
+  <p class="auth-footer">No account? <a href="{% url 'register' %}">Create one</a></p>
+</div>
+{% endblock %}

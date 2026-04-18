@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Delete category · IMS{% endblock %}
+{% block content %}
+<h1>Delete category</h1>
+<p class="lead">Products in this category will be removed too.</p>
+
+<div class="card max-w-form">
+  <p>Delete <strong>{{ category.name }}</strong>? All products in this category and their purchase and sale history will be deleted.</p>
+  <form method="post" class="toolbar toolbar-after">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-sm">Yes, delete</button>
+    <a class="btn btn-outline btn-sm" href="{% url 'category_list' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

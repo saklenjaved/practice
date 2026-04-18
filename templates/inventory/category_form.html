@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ form_title }} · IMS{% endblock %}
+{% block content %}
+<h1>{{ form_title }}</h1>
+<p class="toolbar">
+  <a class="btn btn-outline btn-sm" href="{% url 'category_list' %}">Back to categories</a>
+</p>
+
+<div class="card max-w-form">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary mt-btn">Save</button>
+  </form>
+</div>
+{% endblock %}

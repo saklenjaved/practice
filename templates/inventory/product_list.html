@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Products · IMS{% endblock %}
+{% block content %}
+<div class="toolbar">
+  <div>
+    <h1>Products</h1>
+    <p class="lead compact">Catalog with stock levels.</p>
+  </div>
+  {% if accounts_user and accounts_user.role == 'admin' %}
+  <a class="btn btn-primary btn-sm" href="{% url 'add_product' %}">Add product</a>
+  {% endif %}
+</div>
+
+<p class="toolbar">
+  <a class="btn btn-outline btn-sm" href="{% url 'inventory_dashboard' %}">Overview</a>
+</p>
+
+{% if products %}
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Qty</th>
+        {% if accounts_user and accounts_user.role == 'admin' %}
+        <th>Actions</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td>{{ p.name }}</td>
+        <td>{{ p.category }}</td>
+        <td>{{ p.price }}</td>
+        <td>{{ p.quantity }}</td>
+        {% if accounts_user and accounts_user.role == 'admin' %}
+        <td class="link-actions">
+          <a href="{% url 'edit_product' p.pk %}">Edit</a>
+          ·
+          <a href="{% url 'delete_product' p.pk %}">Delete</a>
+        </td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card card--tight">
+  <p class="muted mb-0">No products yet.{% if accounts_user and accounts_user.role == 'admin' %} Add a category first, then create a product.{% endif %}</p>
+</div>
+{% endif %}
+{% endblock %}

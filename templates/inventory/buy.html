@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Buy {{ product.name }} · IMS{% endblock %}
+{% block content %}
+<h1>Buy {{ product.name }}</h1>
+<p class="lead compact">{{ product.category }} · <strong>{{ product.price }}</strong> each · {{ product.quantity }} in stock</p>
+
+<p class="toolbar">
+  <a class="btn btn-outline btn-sm" href="{% url 'shop' %}">Back to shop</a>
+</p>
+
+<div class="card max-w-form">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary mt-btn">Confirm purchase</button>
+  </form>
+</div>
+{% endblock %}

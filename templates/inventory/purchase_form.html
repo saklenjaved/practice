@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Record purchase · IMS{% endblock %}
+{% block content %}
+<h1>Record purchase</h1>
+<p class="lead">Stock for the product increases by the quantity you enter.</p>
+<p class="toolbar">
+  <a class="btn btn-outline btn-sm" href="{% url 'purchase_list' %}">Back to purchases</a>
+</p>
+
+<div class="card max-w-form">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary mt-btn">Save</button>
+  </form>
+</div>
+{% endblock %}

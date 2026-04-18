@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Shop · IMS{% endblock %}
+{% block content %}
+<h1>Shop</h1>
+<p class="lead compact">Browse products. Sign in as a customer to buy.</p>
+
+{% if shop_audience == 'guest' %}
+<div class="shop-banner shop-banner--guest">
+  <strong>Guests:</strong> you can browse freely.
+  <a href="{% url 'login' %}">Sign in</a> or <a href="{% url 'register' %}">register</a> to purchase items.
+</div>
+{% elif shop_audience == 'user' %}
+<div class="shop-banner shop-banner--user">
+  <strong>Customer:</strong> use <strong>Buy</strong> on a product to complete your purchase (stock updates automatically).
+</div>
+{% elif shop_audience == 'admin' %}
+<div class="shop-banner shop-banner--admin">
+  <strong>Admin:</strong> retail checkout is for customers only. Use <a href="{% url 'sell_add' %}">Record sale</a>
+  under Inventory → Sales to log any sale and adjust stock.
+</div>
+{% endif %}
+
+{% if products %}
+<div class="shop-grid">
+  {% for p in products %}
+  <article class="product-card">
+    <h2>{{ p.name }}</h2>
+    <div class="meta">{{ p.category }}</div>
+    {% if p.description %}
+    <p class="meta mb-0">{{ p.description|truncatewords:22 }}</p>
+    {% endif %}
+    <div class="price">{{ p.price }}</div>
+    {% if p.quantity > 0 %}
+    <div class="stock-ok">In stock: {{ p.quantity }}</div>
+    {% else %}
+    <div class="stock-bad">Out of stock</div>
+    {% endif %}
+    <div class="card-actions">
+      {% if shop_audience == 'guest' %}
+        {% if p.quantity > 0 %}
+        <a class="btn btn-primary btn-sm" href="{% url 'login' %}?next=/buy/{{ p.pk }}/">Sign in to buy</a>
+        {% else %}
+        <span class="btn btn-outline btn-sm is-disabled">Unavailable</span>
+        {% endif %}
+      {% elif shop_audience == 'user' %}
+        {% if p.quantity > 0 %}
+        <a class="btn btn-primary btn-sm" href="{% url 'buy_product' p.pk %}">Buy</a>
+        {% else %}
+        <span class="btn btn-outline btn-sm is-disabled">Unavailable</span>
+        {% endif %}
+      {% else %}
+        {% if p.quantity > 0 %}
+        <a class="btn btn-outline btn-sm" href="{% url 'sell_add' %}">Record sale (admin)</a>
+        {% else %}
+        <span class="muted">Out of stock</span>
+        {% endif %}
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card card--tight">
+  <p class="muted mb-0">No products in the catalog yet.</p>
+</div>
+{% endif %}
+{% endblock %}

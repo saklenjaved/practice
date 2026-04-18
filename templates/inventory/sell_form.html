@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Record sale · IMS{% endblock %}
+{% block content %}
+<h1>Record sale</h1>
+<p class="lead">Stock decreases when the sale is saved. You cannot sell more than is in stock.</p>
+<p class="toolbar">
+  <a class="btn btn-outline btn-sm" href="{% url 'sell_list' %}">Back to sales</a>
+</p>
+
+<div class="card max-w-form">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary mt-btn">Save</button>
+  </form>
+</div>
+{% endblock %}
