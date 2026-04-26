@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.db.models import Q
 from base.models import Room, Message
 from .serializers import RoomSerializer, MessageSerializer
 from base.api import serializers
@@ -22,9 +23,23 @@ def getRoutes(request):
 
 @api_view(['GET'])
 def getRooms(request):
-    rooms = Room.objects.all()
+    search = request.GET.get('search', '')
+    topic = request.GET.get('topic', '')
+    
+    rooms = Room.objects.filter(
+        Q(name__icontains=search) |
+        Q(topic__name__icontains=search)
+    )
+    
+    if topic:
+        rooms = rooms.filter(topic__name__icontains=topic)
+    
     serializer = RoomSerializer(rooms, many=True)
-    return Response(serializer.data)
+    data = {
+        "count": rooms.count(),
+        "rooms": serializer.data
+    }
+    return Response(data)
 
 
 @api_view(['GET'])
